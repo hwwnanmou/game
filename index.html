@@ -1,98 +1,24 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wand Simulator - Kitsune Mage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #050508;
-            color: #e2e8f0;
-            font-family: 'Inter', sans-serif;
-            user-select: none;
-        }
-
-        canvas {
-            display: block;
-            background: #080a0f;
-        }
-
-        .ui-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .ui-panel {
-            pointer-events: auto;
-        }
-
-        .slot {
-            width: 48px;
-            height: 48px;
-            border: 2px solid #2d3748;
-            background: rgba(15, 23, 42, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.1s;
-            position: relative;
-        }
-
-        .slot:hover {
-            border-color: #4a5568;
-            background: rgba(30, 41, 59, 0.9);
-        }
-
-        .slot.selected {
-            border-color: #f6e05e;
-            box-shadow: 0 0 10px rgba(246, 224, 94, 0.4);
-            z-index: 10;
-        }
-
-        .spell-icon {
-            font-size: 20px;
-            pointer-events: none;
-        }
-
-        .screen {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 100;
-            pointer-events: auto;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        #inventoryGrid {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 4px;
-        }
-
-        .stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            font-family: monospace;
-            font-size: 11px;
-        }
-
+        body { margin: 0; overflow: hidden; background: #050508; color: #e2e8f0; font-family: 'Inter', sans-serif; user-select: none; }
+        canvas { display: block; background: #080a0f; }
+        .ui-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .ui-panel { pointer-events: auto; }
+        .slot { width: 48px; height: 48px; border: 2px solid #2d3748; background: rgba(15, 23, 42, 0.9); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.1s; position: relative; }
+        .slot:hover { border-color: #4a5568; background: rgba(30, 41, 59, 0.9); }
+        .slot.selected { border-color: #f6e05e; box-shadow: 0 0 10px rgba(246, 224, 94, 0.4); z-index: 10; }
+        .spell-icon { font-size: 20px; pointer-events: none; }
+        .screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); z-index: 100; pointer-events: auto; }
+        .hidden { display: none !important; }
+        #inventoryGrid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-family: monospace; font-size: 11px; }
+        
         #tooltip {
             position: fixed;
             pointer-events: none;
@@ -103,726 +29,798 @@
             font-size: 11px;
             z-index: 1000;
             width: 200px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             backdrop-filter: blur(4px);
         }
     </style>
 </head>
-
 <body>
 
-    <canvas id="gameCanvas"></canvas>
+<canvas id="gameCanvas"></canvas>
 
-    <div id="tooltip" class="hidden">
-        <div id="ttName" class="font-bold text-cyan-400 mb-1"></div>
-        <div id="ttType" class="text-[9px] text-gray-500 uppercase mb-2"></div>
-        <div id="ttStats" class="space-y-1 font-monospace"></div>
-    </div>
+<div id="tooltip" class="hidden">
+    <div id="ttName" class="font-bold text-cyan-400 mb-1"></div>
+    <div id="ttType" class="text-[9px] text-gray-500 uppercase mb-2"></div>
+    <div id="ttStats" class="space-y-1 font-monospace"></div>
+</div>
 
-    <div id="titleScreen" class="screen">
-        <h1
-            class="text-5xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-500 to-purple-600 italic">
-            WAND SIMULATOR</h1>
-        <p class="text-gray-500 mb-8 tracking-widest text-xs">KITSUNE MAGE'S JOURNEY</p>
-        <button onclick="startGame()"
-            class="px-10 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold transition-transform hover:scale-105">START
-            MISSION</button>
-    </div>
+<div id="titleScreen" class="screen">
+    <h1 class="text-5xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-yellow-500 to-red-600 italic">KITSUNE MAGE</h1>
+    <p class="text-gray-500 mb-8 tracking-widest text-xs uppercase font-bold">狐の魔法使いと杖のシミュレーター</p>
+    <button onclick="startGame()" class="px-10 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold transition-transform hover:scale-105 shadow-lg shadow-orange-900/40">START MISSION</button>
+</div>
 
-    <div id="gameOverScreen" class="screen hidden">
-        <h2 class="text-4xl font-bold text-red-500 mb-4">MISSION FAILED</h2>
-        <p id="deathStage" class="text-gray-400 mb-8 tracking-widest uppercase"></p>
-        <button onclick="startGame()" class="px-8 py-3 bg-white text-black font-bold">RETRY</button>
-    </div>
+<div id="gameOverScreen" class="screen hidden">
+    <h2 class="text-4xl font-bold text-red-500 mb-4 italic font-black">MISSION FAILED</h2>
+    <p id="deathStage" class="text-gray-400 mb-8 tracking-widest uppercase font-bold"></p>
+    <button onclick="startGame()" class="px-8 py-3 bg-white text-black font-bold hover:bg-gray-200">RETRY</button>
+</div>
 
-    <div id="gameClearScreen" class="screen hidden">
-        <h2
-            class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-white mb-4 animate-bounce">
-            MISSION CLEAR</h2>
-        <p class="text-cyan-400 mb-8 tracking-[0.5em] uppercase font-bold">The Legendary Kitsune Mage</p>
-        <button onclick="location.reload()" class="px-8 py-3 bg-cyan-600 text-white font-bold">PLAY AGAIN</button>
-    </div>
+<div id="gameClearScreen" class="screen hidden">
+    <h2 class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-white mb-4 animate-bounce">MISSION CLEAR</h2>
+    <p class="text-orange-400 mb-8 tracking-[0.5em] uppercase font-bold">The Legendary Kitsune Mage</p>
+    <button onclick="location.reload()" class="px-8 py-3 bg-cyan-600 text-white font-bold hover:bg-cyan-500">PLAY AGAIN</button>
+</div>
 
-    <div id="hud" class="ui-overlay p-6 hidden">
-        <div class="flex justify-between items-start max-w-6xl mx-auto">
-            <div class="w-64">
-                <div class="flex justify-between text-[10px] font-bold mb-1 uppercase text-red-400">
-                    <span>Vitality</span><span id="hpText">100/100</span></div>
-                <div class="w-full bg-gray-900 h-1.5">
-                    <div id="hpBar" class="bg-red-500 h-full transition-all" style="width: 100%"></div>
-                </div>
-                <div class="flex justify-between text-[10px] font-bold mt-3 mb-1 uppercase text-blue-400">
-                    <span>Experience</span><span id="lvText">LV. 1</span></div>
-                <div class="w-full bg-gray-900 h-1">
-                    <div id="xpBar" class="bg-blue-500 h-full" style="width: 0%"></div>
-                </div>
-            </div>
-            <div class="text-center">
-                <div id="stageText" class="text-2xl font-black italic tracking-tighter text-white drop-shadow-lg">STAGE
-                    1</div>
-                <div id="stageProgress" class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Normal BGM
-                    Active</div>
-            </div>
+<div id="hud" class="ui-overlay p-6 hidden">
+    <div class="flex justify-between items-start max-w-6xl mx-auto">
+        <div class="w-64">
+            <div class="flex justify-between text-[10px] font-bold mb-1 uppercase text-red-400"><span>Vitality</span><span id="hpText">100/100</span></div>
+            <div class="w-full bg-gray-900 h-1.5"><div id="hpBar" class="bg-red-500 h-full transition-all" style="width: 100%"></div></div>
+            <div class="flex justify-between text-[10px] font-bold mt-3 mb-1 uppercase text-blue-400"><span>Experience</span><span id="lvText">LV. 1</span></div>
+            <div class="w-full bg-gray-900 h-1"><div id="xpBar" class="bg-blue-500 h-full" style="width: 0%"></div></div>
         </div>
-
-        <!-- Edit Panel -->
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
-            <div id="editLabel"
-                class="hidden text-[10px] font-black bg-cyan-500 text-black px-4 py-1 tracking-widest uppercase animate-pulse">
-                Configuration Mode</div>
-            <div id="wandPanel"
-                class="bg-slate-900/90 border border-white/10 p-5 ui-panel min-w-[450px] backdrop-blur-md">
-                <div id="spellSlots" class="hidden flex flex-wrap gap-2 mb-6"></div>
-                <div class="grid grid-cols-2 gap-8 mb-4">
-                    <div>
-                        <div class="flex justify-between mb-1"><span
-                                class="text-[9px] text-gray-500 font-bold uppercase">Mana</span><span id="manaVal"
-                                class="text-xs font-bold">0/0</span></div>
-                        <div class="w-full bg-black h-1 rounded-full">
-                            <div id="manaBar" class="bg-blue-500 h-full transition-all"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1"><span
-                                class="text-[9px] text-gray-500 font-bold uppercase">Action State</span><span
-                                id="castVal" class="text-xs font-bold">Ready</span></div>
-                        <div class="w-full bg-black h-1 rounded-full">
-                            <div id="rechargeBar" class="bg-yellow-500 h-full"></div>
-                        </div>
-                    </div>
-                </div>
-                <div id="inventorySection" class="hidden mt-6 pt-4 border-t border-white/10">
-                    <div id="inventoryGrid"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Loot/Chest UI -->
-        <div id="lootUI"
-            class="hidden absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[200]">
-            <div class="bg-slate-900 border-2 border-yellow-500 p-8 w-[500px] ui-panel shadow-2xl">
-                <h3 class="text-xl font-black italic mb-6 text-center text-yellow-500">NEW WAND ANALYZED</h3>
-                <div class="grid grid-cols-2 gap-8 mb-8">
-                    <div>
-                        <div class="text-[10px] text-gray-500 font-bold mb-2 border-b border-gray-700 pb-1">CURRENT
-                        </div>
-                        <div id="currWandStats" class="stat-grid"></div>
-                    </div>
-                    <div>
-                        <div class="text-[10px] text-yellow-500 font-bold mb-2 border-b border-yellow-700 pb-1">
-                            DISCOVERY</div>
-                        <div id="newLootStats" class="stat-grid"></div>
-                    </div>
-                </div>
-                <div class="flex gap-4">
-                    <button id="swapBtn"
-                        class="flex-1 py-3 bg-yellow-600 font-bold hover:bg-yellow-500 text-white transition-colors">SWAP</button>
-                    <button onclick="closeLoot()"
-                        class="flex-1 py-3 bg-gray-700 font-bold hover:bg-gray-600 text-white transition-colors">DISCARD</button>
-                </div>
-            </div>
+        <div class="text-center">
+            <div id="stageText" class="text-2xl font-black italic tracking-tighter text-white drop-shadow-lg">STAGE 1</div>
+            <div id="stageProgress" class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Normal BGM Active</div>
         </div>
     </div>
 
-    <!-- Level Up -->
-    <div id="levelUpModal" class="hidden screen z-[150]">
-        <div class="bg-slate-900 border border-cyan-500 p-8 w-full max-w-md ui-panel">
-            <h2 id="lvUpTitle" class="text-xl font-black italic text-center mb-6 text-cyan-400">LEVEL UP</h2>
-            <div id="spellOptions" class="grid gap-2"></div>
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
+        <div id="editLabel" class="hidden text-[10px] font-black bg-orange-500 text-black px-4 py-1 tracking-widest uppercase animate-pulse">Configuration Mode</div>
+        <div id="wandPanel" class="bg-slate-900/90 border border-white/10 p-5 ui-panel min-w-[450px] backdrop-blur-md">
+            <div id="spellSlots" class="hidden flex flex-wrap gap-2 mb-6"></div>
+            <div class="grid grid-cols-2 gap-8 mb-4">
+                <div>
+                    <div class="flex justify-between mb-1"><span class="text-[9px] text-gray-500 font-bold uppercase">Mana</span><span id="manaVal" class="text-xs font-bold">0/0</span></div>
+                    <div class="w-full bg-black h-1 rounded-full"><div id="manaBar" class="bg-blue-500 h-full transition-all"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between mb-1"><span class="text-[9px] text-gray-500 font-bold uppercase">Action State</span><span id="castVal" class="text-xs font-bold">Ready</span></div>
+                    <div class="w-full bg-black h-1 rounded-full"><div id="rechargeBar" class="bg-yellow-500 h-full"></div></div>
+                </div>
+            </div>
+            <div id="inventorySection" class="hidden mt-6 pt-4 border-t border-white/10">
+                <div id="inventoryGrid"></div>
+            </div>
         </div>
     </div>
+    
+    <div id="lootUI" class="hidden absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[200]">
+        <div class="bg-slate-900 border-2 border-yellow-500 p-8 w-[500px] ui-panel shadow-2xl">
+            <h3 class="text-xl font-black italic mb-6 text-center text-yellow-500">NEW WAND ANALYZED</h3>
+            <div class="grid grid-cols-2 gap-8 mb-8">
+                <div><div class="text-[10px] text-gray-500 font-bold mb-2 border-b border-gray-700 pb-1 uppercase">Current</div><div id="currWandStats" class="stat-grid"></div></div>
+                <div><div class="text-[10px] text-yellow-500 font-bold mb-2 border-b border-yellow-700 pb-1 uppercase">Discovery</div><div id="newLootStats" class="stat-grid"></div></div>
+            </div>
+            <div class="flex gap-4">
+                <button id="swapBtn" class="flex-1 py-3 bg-yellow-600 font-bold hover:bg-yellow-500 text-white transition-colors">SWAP</button>
+                <button onclick="closeLoot()" class="flex-1 py-3 bg-gray-700 font-bold hover:bg-gray-600 text-white transition-colors">DISCARD</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <script>
-        /**
-         * ASSETS & AUDIO
-         */
-        const bgmNormal = new Audio('maou_bgm_fantasy10.mp3');
-        bgmNormal.loop = true;
-        const bgmBoss = new Audio('maou_bgm_fantasy11.mp3');
-        bgmBoss.loop = true;
+<div id="levelUpModal" class="hidden screen z-[150]">
+    <div class="bg-slate-900 border border-cyan-500 p-8 w-full max-w-md ui-panel">
+        <h2 id="lvUpTitle" class="text-xl font-black italic text-center mb-6 text-cyan-400">LEVEL UP</h2>
+        <div id="spellOptions" class="grid gap-2"></div>
+    </div>
+</div>
 
-        const playerImg = new Image();
-        playerImg.src = 'animal_character_kitsune_mahotsukai.png';
-        let playerImgLoaded = false;
-        playerImg.onload = () => playerImgLoaded = true;
+<script>
+/**
+ * ASSETS & AUDIO
+ */
+const bgmNormal = new Audio('https://maoudamashii.jokersounds.com/music/bgm/mp3/bgm_maoudamashii_fantasy10.mp3');
+bgmNormal.loop = true;
+const bgmBoss = new Audio('https://maoudamashii.jokersounds.com/music/bgm/mp3/bgm_maoudamashii_fantasy11.mp3');
+bgmBoss.loop = true;
 
-        function switchBGM(isBoss) {
-            if (isBoss) {
-                if (!bgmNormal.paused) bgmNormal.pause();
-                if (bgmBoss.paused) bgmBoss.play().catch(e => console.log("Audio play deferred"));
-            } else {
-                if (!bgmBoss.paused) bgmBoss.pause();
-                if (bgmNormal.paused) bgmNormal.play().catch(e => console.log("Audio play deferred"));
+const playerImg = new Image();
+playerImg.crossOrigin = "anonymous";
+playerImg.src = 'https://raw.githubusercontent.com/hwwnanmou/materials/main/animal_character_kitsune_mahotsukai.png';
+
+let playerImgLoaded = false;
+playerImg.onload = () => { playerImgLoaded = true; };
+
+function switchBGM(isBoss) {
+    const playAudio = (audio) => { audio.play().catch(() => {}); };
+    if (isBoss) {
+        bgmNormal.pause();
+        bgmBoss.currentTime = 0;
+        playAudio(bgmBoss);
+    } else {
+        bgmBoss.pause();
+        bgmNormal.currentTime = 0;
+        playAudio(bgmNormal);
+    }
+}
+
+/**
+ * CONSTANTS & DATA
+ */
+const TYPES = { PROJ: '放射物', MOD: '調整盤', MULTI: 'マルチ' };
+const SPELLS = {
+    spark: { id:'spark', name:'スパークボルト', type:TYPES.PROJ, icon:'✨', dmg:10, delay:0.04, recharge:0, mana:5, spread:-5, color:'#4fd1c5', weight: 10 },
+    fireball: { id:'fireball', name:'ファイアボール', type:TYPES.PROJ, icon:'🔥', dmg:50, delay:0.50, recharge:0.1, mana:45, spread:0, color:'#f6e05e', radius:90, explode:true, weight: 10 },
+    chainsaw: { id:'chainsaw', name:'チェーンソー', type:TYPES.PROJ, icon:'⚙️', dmg:1, delay:0, recharge:-0.17, mana:1, spread:10, color:'#cbd5e0', weight: 2, boomerang: true, maxHits: 10 }, 
+    mana: { id:'mana', name:'マナ回復', type:TYPES.MOD, icon:'💎', dmg:0, delay:0.13, recharge:0, mana:-40, spread:0, weight: 3 }, 
+    double: { id:'double', name:'2倍呪文', type:TYPES.MULTI, icon:'♊', dmg:0, delay:0, recharge:0, mana:0, spread:0, count:2, weight: 8 },
+    triple: { id:'triple', name:'3倍呪文', type:TYPES.MULTI, icon:'⚡', dmg:0, delay:0.05, recharge:0, mana:5, spread:0, count:3, weight: 6 }
+};
+
+const STAGE_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#6366f1', '#a855f7'];
+
+/**
+ * STATE
+ */
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let width, height;
+function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize);
+resize();
+
+let currentState = 'START';
+let isEditMode = false;
+let gameTime = 0;
+let lastTime = 0;
+let mouse = { x:0, y:0, down:false };
+let keys = {};
+let selection = { type:null, idx:null };
+let boss = null;
+
+let player = {
+    x: 0, y: 0, hp: 100, maxHp: 100, level: 1, xp: 0, 
+    xpNext: 200, 
+    critChance: 0.15,
+    facingLeft: false,
+    inventory: [], 
+    wand: {
+        slots: 4,
+        spells: [SPELLS.spark, null, null, null],
+        manaMax: 200, mana: 200, manaRegen: 50,
+        rechargeTime: 0.8, castDelay: 0.1, spread: 2,
+        currentDelay: 0, currentRecharge: 0,
+        pointer: 0
+    }
+};
+
+let enemies = [], projectiles = [], enemyProjectiles = [], gems = [], chests = [], particles = [], damageNumbers = [];
+
+/**
+ * DAMAGE NUMBERS
+ */
+class DamageNumber {
+    constructor(x, y, value, color, isCrit = false) {
+        this.x = x;
+        this.y = y;
+        this.value = Math.round(value);
+        this.color = color;
+        this.isCrit = isCrit;
+        this.life = 1.0;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = -3 - Math.random() * 2;
+    }
+    update(dt) {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.1;
+        this.life -= dt * 1.5;
+    }
+    draw(ctx, offX, offY) {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.fillStyle = this.color;
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        ctx.textAlign = 'center';
+        ctx.font = `${this.isCrit ? 'bold 24px' : 'bold 16px'} 'Inter', sans-serif`;
+        ctx.strokeText(this.value, this.x + offX, this.y + offY);
+        ctx.fillText(this.value, this.x + offX, this.y + offY);
+        ctx.restore();
+    }
+}
+
+function spawnDamageNumber(x, y, val, color, isCrit) {
+    damageNumbers.push(new DamageNumber(x, y, val, color, isCrit));
+}
+
+/**
+ * UTILS
+ */
+function getWeightedRandomSpell() {
+    const pool = Object.values(SPELLS);
+    const totalWeight = pool.reduce((acc, s) => acc + s.weight, 0);
+    let random = Math.random() * totalWeight;
+    for (const s of pool) {
+        if (random < s.weight) return s;
+        random -= s.weight;
+    }
+    return pool[0];
+}
+
+/**
+ * INPUT
+ */
+window.onkeydown = e => { keys[e.code] = true; if(e.code === 'Tab') { e.preventDefault(); toggleEdit(); } };
+window.onkeyup = e => keys[e.code] = false;
+window.onmousemove = e => { mouse.x = e.clientX; mouse.y = e.clientY; updateTooltip(); };
+window.onmousedown = () => { if(!isEditMode && currentState === 'PLAYING') mouse.down = true; };
+window.onmouseup = () => mouse.down = false;
+
+function toggleEdit() {
+    if(currentState !== 'PLAYING' && !isEditMode) return;
+    isEditMode = !isEditMode;
+    document.getElementById('spellSlots').classList.toggle('hidden', !isEditMode);
+    document.getElementById('inventorySection').classList.toggle('hidden', !isEditMode);
+    document.getElementById('editLabel').classList.toggle('hidden', !isEditMode);
+    if(!isEditMode) { 
+        selection = { type:null, idx:null }; 
+        document.getElementById('tooltip').classList.add('hidden');
+        player.wand.pointer = 0; 
+    }
+}
+
+function updateTooltip() {
+    if (!isEditMode) return;
+    const tt = document.getElementById('tooltip');
+    const hoveredElement = document.elementFromPoint(mouse.x, mouse.y);
+    if (hoveredElement && hoveredElement.classList.contains('slot')) {
+        const s = hoveredElement._spellData;
+        if (s) {
+            tt.classList.remove('hidden');
+            tt.style.left = (mouse.x + 15) + 'px';
+            tt.style.top = (mouse.y + 15) + 'px';
+            document.getElementById('ttName').innerText = s.name;
+            document.getElementById('ttType').innerText = s.type;
+            let h = '';
+            if (s.dmg !== 0) h += `<div class="flex justify-between"><span>威力</span><span class="text-white">${s.dmg}</span></div>`;
+            if (s.mana !== 0) h += `<div class="flex justify-between"><span>マナ</span><span class="${s.mana > 0 ? 'text-blue-400' : 'text-green-400'}">${s.mana}</span></div>`;
+            if (s.delay !== 0) h += `<div class="flex justify-between"><span>発射間隔</span><span class="text-white">${s.delay > 0 ? '+' : ''}${s.delay}s</span></div>`;
+            if (s.recharge !== 0) h += `<div class="flex justify-between"><span>リロード</span><span class="text-white">${s.recharge > 0 ? '+' : ''}${s.recharge}s</span></div>`;
+            if (s.maxHits) h += `<div class="flex justify-between"><span>貫通数</span><span class="text-yellow-400">${s.maxHits}</span></div>`;
+            document.getElementById('ttStats').innerHTML = h;
+            return;
+        }
+    }
+    tt.classList.add('hidden');
+}
+
+/**
+ * GAME CORE
+ */
+function startGame() {
+    player.x = 0; player.y = 0; player.hp = 100; player.xp = 0; player.level = 1; 
+    player.xpNext = 200; 
+    player.inventory = []; 
+    player.wand.mana = player.wand.manaMax;
+    player.wand.pointer = 0;
+    player.wand.spells = [SPELLS.spark, null, null, null];
+    enemies = []; projectiles = []; enemyProjectiles = []; gems = []; chests = []; particles = []; damageNumbers = []; boss = null;
+    
+    document.getElementById('titleScreen').classList.add('hidden');
+    document.getElementById('gameOverScreen').classList.add('hidden');
+    document.getElementById('gameClearScreen').classList.add('hidden');
+    document.getElementById('hud').classList.remove('hidden');
+    
+    currentState = 'PLAYING';
+    switchBGM(false);
+}
+
+function cast() {
+    let w = player.wand;
+    if(w.currentDelay > 0 || w.currentRecharge > 0) return;
+
+    const targetAngle = Math.atan2(mouse.y - height/2, mouse.x - width/2);
+    let tempModifiers = { dmgAdd: 0, delayAdd: 0, spreadAdd: 0 };
+    let spellsToFire = [];
+    let visitedIndices = new Set();
+    let isWrapped = false;
+    let addedCastDelay = 0;
+
+    const collectSpells = (count) => {
+        let collected = 0;
+        while(collected < count) {
+            if(visitedIndices.size >= w.spells.length) break;
+            if(w.pointer >= w.spells.length) {
+                if(!isWrapped) { isWrapped = true; w.pointer = 0; } else break;
+            }
+            let idx = w.pointer;
+            if(visitedIndices.has(idx)) { w.pointer++; continue; }
+            visitedIndices.add(idx);
+            let s = w.spells[idx];
+            w.pointer++;
+            if(!s) continue;
+            if(w.mana < s.mana) continue;
+            w.mana -= s.mana;
+
+            if(s.type === TYPES.PROJ) {
+                spellsToFire.push({ spell: s, mods: { ...tempModifiers } });
+                addedCastDelay += s.delay + tempModifiers.delayAdd;
+                if(s.id === 'chainsaw') addedCastDelay = 0; 
+                collected++;
+            } else if(s.type === TYPES.MOD) {
+                tempModifiers.dmgAdd += s.dmg;
+                tempModifiers.delayAdd += s.delay;
+                tempModifiers.spreadAdd += s.spread;
+            } else if(s.type === TYPES.MULTI) {
+                collectSpells(s.count);
+                collected++;
             }
         }
+    };
 
-        /**
-         * CONSTANTS & DATA
-         */
-        const TYPES = { PROJ: '放射物', MOD: '調整盤', MULTI: 'マルチ' };
-        const SPELLS = {
-            spark: { id: 'spark', name: 'スパークボルト', type: TYPES.PROJ, icon: '✨', dmg: 8, delay: 0.05, recharge: 0, mana: 5, spread: -5, color: '#4fd1c5', weight: 10 },
-            fireball: { id: 'fireball', name: 'ファイアボール', type: TYPES.PROJ, icon: '🔥', dmg: 40, delay: 0.50, recharge: 0, mana: 40, spread: 0, color: '#f6e05e', radius: 80, explode: true, weight: 10 },
-            chainsaw: { id: 'chainsaw', name: 'チェーンソー', type: TYPES.PROJ, icon: '⚙️', dmg: 3, delay: 0, recharge: -0.17, mana: 1, spread: 10, color: '#cbd5e0', weight: 2 },
-            mana: { id: 'mana', name: 'マナ回復', type: TYPES.MOD, icon: '💎', dmg: 0, delay: 0.13, recharge: 0, mana: -35, spread: 0, weight: 3 },
-            double: { id: 'double', name: '2倍呪文', type: TYPES.MULTI, icon: '♊', dmg: 0, delay: 0, recharge: 0, mana: 0, spread: 0, count: 2, weight: 8 },
-            triple: { id: 'triple', name: '3倍呪文', type: TYPES.MULTI, icon: '⚡', dmg: 0, delay: 0.05, recharge: 0, mana: 5, spread: 0, count: 3, weight: 6 }
-        };
+    collectSpells(1);
 
-        const STAGE_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#6366f1', '#a855f7'];
+    spellsToFire.forEach(item => {
+        const s = item.spell;
+        const m = item.mods;
+        const finalSpread = Math.max(0, w.spread + s.spread + m.spreadAdd);
+        const shootAngle = targetAngle + (Math.random() - 0.5) * (finalSpread * Math.PI / 180);
+        let isCrit = Math.random() < player.critChance;
+        projectiles.push({
+            x: player.x, y: player.y,
+            vx: Math.cos(shootAngle) * 14, vy: Math.sin(shootAngle) * 14,
+            dmg: (s.dmg + m.dmgAdd) * (isCrit ? 2 : 1), color: s.color, 
+            radius: s.explode ? 12 : 5, 
+            life: s.boomerang ? 300 : 100,
+            fullLife: s.boomerang ? 300 : 100,
+            explode: s.explode, rad: s.radius, isCrit,
+            boomerang: s.boomerang || false,
+            returning: false,
+            returnDelay: 35,
+            hitsLeft: s.maxHits || 1, // 10回当たると消える設定
+            lastHitId: null, // 連続ヒット防止用
+            hitCooldown: 0
+        });
+    });
 
-        /**
-         * STATE
-         */
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resize);
-        resize();
+    w.currentDelay = Math.max(w.castDelay, addedCastDelay);
+    if(w.pointer >= w.spells.length || spellsToFire.length === 0) {
+        let totalRecharge = w.rechargeTime;
+        w.spells.forEach(s => { if(s) totalRecharge = Math.max(0, totalRecharge + s.recharge); });
+        w.currentRecharge = totalRecharge;
+        w.pointer = 0;
+    }
+}
 
-        let currentState = 'START';
-        let isEditMode = false;
-        let gameTime = 0;
-        let lastTime = 0;
-        let mouse = { x: 0, y: 0, down: false };
-        let keys = {};
-        let selection = { type: null, idx: null };
-        let boss = null;
+/**
+ * MAIN UPDATE
+ */
+function update(dt) {
+    if(currentState === 'GAMEOVER' || currentState === 'START' || currentState === 'PAUSED' || currentState === 'CLEAR' || isEditMode) { 
+        updateUI(); return; 
+    }
 
-        let player = {
-            x: 0, y: 0, hp: 100, maxHp: 100, level: 1, xp: 0,
-            xpNext: 200,
-            critChance: 0.05,
-            facingLeft: false,
-            inventory: [],
-            wand: {
-                slots: 4,
-                spells: [SPELLS.spark, null, null, null],
-                manaMax: 150, mana: 150, manaRegen: 45,
-                rechargeTime: 1.0, castDelay: 0.1, spread: 2,
-                currentDelay: 0, currentRecharge: 0,
-                pointer: 0
-            }
-        };
+    let mx = 0, my = 0;
+    if(keys.KeyW) my--; if(keys.KeyS) my++;
+    if(keys.KeyA) { mx--; player.facingLeft = true; }
+    if(keys.KeyD) { mx++; player.facingLeft = false; }
+    if(mx||my) {
+        let mag = Math.sqrt(mx*mx+my*my);
+        player.x += (mx/mag) * 4.5; player.y += (my/mag) * 4.5;
+    }
 
-        let enemies = [], projectiles = [], enemyProjectiles = [], gems = [], chests = [], particles = [];
+    let w = player.wand;
+    if(w.currentDelay > 0) w.currentDelay -= dt;
+    if(w.currentRecharge > 0) w.currentRecharge -= dt;
+    w.mana = Math.min(w.manaMax, w.mana + w.manaRegen * dt);
+    if(mouse.down) cast();
 
-        /**
-         * UTILS
-         */
-        function getWeightedRandomSpell() {
-            const pool = Object.values(SPELLS);
-            const totalWeight = pool.reduce((acc, s) => acc + s.weight, 0);
-            let random = Math.random() * totalWeight;
-            for (const s of pool) {
-                if (random < s.weight) return s;
-                random -= s.weight;
-            }
-            return pool[0];
+    if(player.level < 7) {
+        if(gameTime % 90 === 0) spawnEnemy();
+    } else {
+        if(!boss) spawnBoss();
+        else updateBoss();
+    }
+    
+    if(gameTime % 1500 === 0) spawnChest();
+
+    for(let i=chests.length-1; i>=0; i--) {
+        if(Math.hypot(player.x-chests[i].x, player.y-chests[i].y) < 30) openChest(chests.splice(i,1)[0]);
+    }
+
+    enemyProjectiles.forEach((p, pi) => {
+        p.x += p.vx; p.y += p.vy; p.life--;
+        if(Math.hypot(p.x - player.x, p.y - player.y) < 25) {
+            player.hp -= 15; p.life = 0;
+            spawnDamageNumber(player.x, player.y - 20, 15, '#ff4d4d', false);
+            createParticles(player.x, player.y, '#f00', 5);
         }
+    });
+    enemyProjectiles = enemyProjectiles.filter(p => p.life > 0);
 
-        /**
-         * INPUT
-         */
-        window.onkeydown = e => { keys[e.code] = true; if (e.code === 'Tab') { e.preventDefault(); toggleEdit(); } };
-        window.onkeyup = e => keys[e.code] = false;
-        window.onmousemove = e => { mouse.x = e.clientX; mouse.y = e.clientY; updateTooltip(); };
-        window.onmousedown = () => { if (!isEditMode && currentState === 'PLAYING') mouse.down = true; };
-        window.onmouseup = () => mouse.down = false;
-
-        function toggleEdit() {
-            if (currentState !== 'PLAYING' && !isEditMode) return;
-            isEditMode = !isEditMode;
-            document.getElementById('spellSlots').classList.toggle('hidden', !isEditMode);
-            document.getElementById('inventorySection').classList.toggle('hidden', !isEditMode);
-            document.getElementById('editLabel').classList.toggle('hidden', !isEditMode);
-            if (!isEditMode) {
-                selection = { type: null, idx: null };
-                document.getElementById('tooltip').classList.add('hidden');
-                player.wand.pointer = 0;
-            }
+    enemies.forEach((e, ei) => {
+        let a = Math.atan2(player.y-e.y, player.x-e.x);
+        e.x += Math.cos(a)* (e.isBoss ? 1.5 : 2.5); 
+        e.y += Math.sin(a)* (e.isBoss ? 1.5 : 2.5);
+        
+        if(Math.hypot(player.x-e.x, player.y-e.y) < (e.r + 20)) {
+            player.hp -= 0.8;
+            if (gameTime % 10 === 0) spawnDamageNumber(player.x, player.y - 20, 1, '#ff4d4d', false);
         }
+        if(player.hp <= 0) {
+            currentState = 'GAMEOVER';
+            bgmNormal.pause(); bgmBoss.pause();
+            document.getElementById('deathStage').innerText = `Failed at Stage ${player.level}`;
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+        }
+    });
 
-        function updateTooltip() {
-            if (!isEditMode) return;
-            const tt = document.getElementById('tooltip');
-            const hoveredElement = document.elementFromPoint(mouse.x, mouse.y);
-            if (hoveredElement && hoveredElement.classList.contains('slot')) {
-                const s = hoveredElement._spellData;
-                if (s) {
-                    tt.classList.remove('hidden');
-                    tt.style.left = (mouse.x + 15) + 'px';
-                    tt.style.top = (mouse.y + 15) + 'px';
-                    document.getElementById('ttName').innerText = s.name;
-                    document.getElementById('ttType').innerText = s.type;
-                    let h = '';
-                    if (s.dmg !== 0) h += `<div class="flex justify-between"><span>威力</span><span class="text-white">${s.dmg}</span></div>`;
-                    if (s.mana !== 0) h += `<div class="flex justify-between"><span>マナ</span><span class="${s.mana > 0 ? 'text-blue-400' : 'text-green-400'}">${s.mana}</span></div>`;
-                    if (s.delay !== 0) h += `<div class="flex justify-between"><span>発射間隔</span><span class="text-white">${s.delay > 0 ? '+' : ''}${s.delay}s</span></div>`;
-                    if (s.recharge !== 0) h += `<div class="flex justify-between"><span>リロード</span><span class="text-white">${s.recharge > 0 ? '+' : ''}${s.recharge}s</span></div>`;
-                    document.getElementById('ttStats').innerHTML = h;
-                    return;
+    projectiles.forEach((p, pi) => {
+        // Boomerang Logic
+        if (p.boomerang) {
+            let elapsed = p.fullLife - p.life;
+            if (elapsed > p.returnDelay) {
+                p.returning = true;
+                let angleToPlayer = Math.atan2(player.y - p.y, player.x - p.x);
+                let targetVx = Math.cos(angleToPlayer) * 16;
+                let targetVy = Math.sin(angleToPlayer) * 16;
+                p.vx += (targetVx - p.vx) * 0.1;
+                p.vy += (targetVy - p.vy) * 0.1;
+                
+                if (Math.hypot(p.x - player.x, p.y - player.y) < 20 && elapsed > p.returnDelay + 10) {
+                    p.life = 0;
                 }
             }
-            tt.classList.add('hidden');
         }
 
-        /**
-         * GAME CORE
-         */
-        function startGame() {
-            player.x = 0; player.y = 0; player.hp = 100; player.xp = 0; player.level = 1;
-            player.xpNext = 200;
-            player.inventory = [];
-            player.wand.mana = player.wand.manaMax;
-            player.wand.pointer = 0;
-            player.wand.spells = [SPELLS.spark, null, null, null];
-            enemies = []; projectiles = []; enemyProjectiles = []; gems = []; chests = []; particles = []; boss = null;
+        p.x += p.vx; p.y += p.vy; p.life--;
+        if (p.hitCooldown > 0) p.hitCooldown--;
+        
+        enemies.forEach((e, ei) => {
+            if(Math.hypot(p.x-e.x, p.y-e.y) < e.r + p.radius) {
+                if (p.hitCooldown > 0 && p.lastHitId === e) return; // 同じ敵への連続ヒットを抑制
 
-            document.getElementById('titleScreen').classList.add('hidden');
-            document.getElementById('gameOverScreen').classList.add('hidden');
-            document.getElementById('gameClearScreen').classList.add('hidden');
-            document.getElementById('hud').classList.remove('hidden');
-
-            currentState = 'PLAYING';
-            switchBGM(false);
-        }
-
-        function cast() {
-            let w = player.wand;
-            if (w.currentDelay > 0 || w.currentRecharge > 0) return;
-
-            const targetAngle = Math.atan2(mouse.y - height / 2, mouse.x - width / 2);
-            let tempModifiers = { dmgAdd: 0, delayAdd: 0, spreadAdd: 0 };
-            let spellsToFire = [];
-            let visitedIndices = new Set();
-            let isWrapped = false;
-            let addedCastDelay = 0;
-
-            const collectSpells = (count) => {
-                let collected = 0;
-                while (collected < count) {
-                    if (visitedIndices.size >= w.spells.length) break;
-                    if (w.pointer >= w.spells.length) {
-                        if (!isWrapped) { isWrapped = true; w.pointer = 0; } else break;
-                    }
-                    let idx = w.pointer;
-                    if (visitedIndices.has(idx)) { w.pointer++; continue; }
-                    visitedIndices.add(idx);
-                    let s = w.spells[idx];
-                    w.pointer++;
-                    if (!s) continue;
-                    if (w.mana < s.mana) continue;
-                    w.mana -= s.mana;
-
-                    if (s.type === TYPES.PROJ) {
-                        spellsToFire.push({ spell: s, mods: { ...tempModifiers } });
-                        addedCastDelay += s.delay + tempModifiers.delayAdd;
-                        if (s.id === 'chainsaw') addedCastDelay = 0;
-                        collected++;
-                    } else if (s.type === TYPES.MOD) {
-                        tempModifiers.dmgAdd += s.dmg;
-                        tempModifiers.delayAdd += s.delay;
-                        tempModifiers.spreadAdd += s.spread;
-                    } else if (s.type === TYPES.MULTI) {
-                        collectSpells(s.count);
-                        collected++;
-                    }
-                }
-            };
-
-            collectSpells(1);
-
-            spellsToFire.forEach(item => {
-                const s = item.spell;
-                const m = item.mods;
-                const finalSpread = Math.max(0, w.spread + s.spread + m.spreadAdd);
-                const shootAngle = targetAngle + (Math.random() - 0.5) * (finalSpread * Math.PI / 180);
-                let isCrit = Math.random() < player.critChance;
-                projectiles.push({
-                    x: player.x, y: player.y,
-                    vx: Math.cos(shootAngle) * 14, vy: Math.sin(shootAngle) * 14,
-                    dmg: (s.dmg + m.dmgAdd) * (isCrit ? 2 : 1), color: s.color,
-                    radius: s.explode ? 12 : 5, life: 100, explode: s.explode, rad: s.radius, isCrit
-                });
-            });
-
-            w.currentDelay = Math.max(w.castDelay, addedCastDelay);
-            if (w.pointer >= w.spells.length || spellsToFire.length === 0) {
-                let totalRecharge = w.rechargeTime;
-                w.spells.forEach(s => { if (s) totalRecharge = Math.max(0, totalRecharge + s.recharge); });
-                w.currentRecharge = totalRecharge;
-                w.pointer = 0;
-            }
-        }
-
-        /**
-         * MAIN UPDATE
-         */
-        function update(dt) {
-            if (currentState === 'GAMEOVER' || currentState === 'START' || currentState === 'PAUSED' || currentState === 'CLEAR' || isEditMode) {
-                updateUI(); return;
-            }
-
-            let mx = 0, my = 0;
-            if (keys.KeyW) my--; if (keys.KeyS) my++;
-            if (keys.KeyA) { mx--; player.facingLeft = true; }
-            if (keys.KeyD) { mx++; player.facingLeft = false; }
-            if (mx || my) {
-                let mag = Math.sqrt(mx * mx + my * my);
-                player.x += (mx / mag) * 4.5; player.y += (my / mag) * 4.5;
-            }
-
-            let w = player.wand;
-            if (w.currentDelay > 0) w.currentDelay -= dt;
-            if (w.currentRecharge > 0) w.currentRecharge -= dt;
-            w.mana = Math.min(w.manaMax, w.mana + w.manaRegen * dt);
-            if (mouse.down) cast();
-
-            if (player.level < 7) {
-                if (gameTime % 90 === 0) spawnEnemy();
-            } else {
-                if (!boss) spawnBoss();
-                else updateBoss();
-            }
-
-            if (gameTime % 1500 === 0) spawnChest();
-
-            for (let i = chests.length - 1; i >= 0; i--) {
-                if (Math.hypot(player.x - chests[i].x, player.y - chests[i].y) < 30) openChest(chests.splice(i, 1)[0]);
-            }
-
-            enemyProjectiles.forEach((p, pi) => {
-                p.x += p.vx; p.y += p.vy; p.life--;
-                if (Math.hypot(p.x - player.x, p.y - player.y) < 25) {
-                    player.hp -= 12; p.life = 0;
-                    createParticles(player.x, player.y, '#f00', 5);
-                }
-            });
-            enemyProjectiles = enemyProjectiles.filter(p => p.life > 0);
-
-            enemies.forEach((e, ei) => {
-                let a = Math.atan2(player.y - e.y, player.x - e.x);
-                e.x += Math.cos(a) * (e.isBoss ? 1.5 : 2.5);
-                e.y += Math.sin(a) * (e.isBoss ? 1.5 : 2.5);
-
-                if (Math.hypot(player.x - e.x, player.y - e.y) < (e.r + 15)) player.hp -= 0.6;
-                if (player.hp <= 0) {
-                    currentState = 'GAMEOVER';
-                    bgmNormal.pause(); bgmBoss.pause();
-                    document.getElementById('deathStage').innerText = `Failed at Stage ${player.level}`;
-                    document.getElementById('gameOverScreen').classList.remove('hidden');
-                }
-            });
-
-            projectiles.forEach((p, pi) => {
-                p.x += p.vx; p.y += p.vy; p.life--;
-                enemies.forEach((e, ei) => {
-                    if (Math.hypot(p.x - e.x, p.y - e.y) < e.r + p.radius) {
-                        if (p.explode) explode(p.x, p.y, p.rad, p.dmg);
-                        else e.hp -= p.dmg;
-                        p.life = 0;
-                        if (e.hp <= 0) {
-                            if (e.isBoss) winGame();
-                            else {
-                                gems.push({ x: e.x, y: e.y, xp: 40 + player.level * 15 });
-                                enemies.splice(ei, 1);
-                            }
-                        }
-                    }
-                });
-            });
-            projectiles = projectiles.filter(p => p.life > 0);
-
-            gems.forEach((g, gi) => {
-                if (Math.hypot(player.x - g.x, player.y - g.y) < 150) {
-                    let a = Math.atan2(player.y - g.y, player.x - g.x);
-                    g.x += Math.cos(a) * 12; g.y += Math.sin(a) * 12;
-                    if (Math.hypot(player.x - g.x, player.y - g.y) < 25) {
-                        player.xp += g.xp; gems.splice(gi, 1);
-                        if (player.xp >= player.xpNext) levelUp();
-                    }
-                }
-            });
-
-            particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.alpha -= 0.04; });
-            particles = particles.filter(p => p.alpha > 0);
-
-            gameTime++;
-            updateUI();
-        }
-
-        function explode(x, y, rad, dmg) {
-            createParticles(x, y, '#ffaa00', 15);
-            enemies.forEach(e => {
-                let d = Math.hypot(x - e.x, y - e.y);
-                if (d < rad) e.hp -= dmg * (1 - d / rad);
-            });
-        }
-
-        function spawnEnemy() {
-            if (enemies.length > 15) return;
-            let a = Math.random() * Math.PI * 2, d = 700;
-            let hp = 50 + (player.level * 40);
-            enemies.push({
-                x: player.x + Math.cos(a) * d, y: player.y + Math.sin(a) * d,
-                hp: hp, maxHp: hp,
-                r: 22, color: STAGE_COLORS[player.level - 1], isBoss: false
-            });
-        }
-
-        function spawnBoss() {
-            enemies = [];
-            boss = {
-                x: player.x, y: player.y - 400,
-                hp: 6000, maxHp: 6000, r: 90,
-                color: STAGE_COLORS[6], isBoss: true,
-                shootTimer: 0
-            };
-            enemies.push(boss);
-            switchBGM(true);
-        }
-
-        function updateBoss() {
-            boss.shootTimer++;
-            if (boss.shootTimer % 50 === 0) {
-                for (let i = 0; i < 16; i++) {
-                    let a = (i / 16) * Math.PI * 2 + (gameTime * 0.08);
-                    enemyProjectiles.push({
-                        x: boss.x, y: boss.y,
-                        vx: Math.cos(a) * 6, vy: Math.sin(a) * 6,
-                        life: 250
-                    });
-                }
-            }
-        }
-
-        function levelUp() {
-            if (player.level >= 7) return;
-            player.level++; player.xp = 0;
-            player.xpNext *= 1.5;
-            currentState = 'PAUSED';
-
-            const modal = document.getElementById('levelUpModal');
-            modal.classList.remove('hidden');
-            document.getElementById('lvUpTitle').innerText = `STAGE ${player.level} REACHED`;
-
-            let opts = document.getElementById('spellOptions');
-            opts.innerHTML = '';
-
-            const chosen = [];
-            for (let i = 0; i < 3; i++) chosen.push(getWeightedRandomSpell());
-
-            chosen.forEach(s => {
-                let b = document.createElement('button');
-                b.className = "flex items-center gap-4 bg-slate-800 p-4 hover:bg-slate-700 text-left border border-white/5 transition-transform hover:scale-105";
-                const rarityText = s.weight < 5 ? '<span class="text-[8px] text-yellow-500 font-bold border border-yellow-500 px-1 ml-2">RARE</span>' : '';
-                b.innerHTML = `<span class="text-2xl">${s.icon}</span><div><div class="font-bold text-sm text-cyan-400">${s.name}${rarityText}</div><div class="text-[9px] text-gray-500 uppercase">${s.type}</div></div>`;
-                b.onclick = () => {
-                    player.inventory.push({ ...s });
-                    modal.classList.add('hidden');
-                    currentState = 'PLAYING';
-                };
-                opts.appendChild(b);
-            });
-        }
-
-        function winGame() {
-            currentState = 'CLEAR';
-            bgmBoss.pause();
-            document.getElementById('gameClearScreen').classList.remove('hidden');
-            createParticles(player.x, player.y, '#fff', 100);
-        }
-
-        /**
-         * CHESTS
-         */
-        function spawnChest() {
-            let a = Math.random() * Math.PI * 2, d = 500;
-            chests.push({ x: player.x + Math.cos(a) * d, y: player.y + Math.sin(a) * d });
-        }
-
-        function openChest(c) {
-            const loot = {
-                slots: 4 + Math.floor(Math.random() * 4),
-                rechargeTime: (0.3 + Math.random() * 0.7).toFixed(2) * 1,
-                castDelay: (0.05 + Math.random() * 0.1).toFixed(2) * 1,
-                manaMax: 150 + Math.floor(Math.random() * 250),
-                manaRegen: 40 + Math.floor(Math.random() * 80),
-                spread: Math.floor(Math.random() * 8) - 1
-            };
-
-            const renderStats = (w, elId, isLoot = false) => {
-                const el = document.getElementById(elId);
-                const stats = [
-                    { n: 'スロット', v: w.slots },
-                    { n: '発射間隔', v: w.castDelay + 's' },
-                    { n: 'リロード', v: w.rechargeTime + 's' },
-                    { n: '最大マナ', v: w.manaMax },
-                    { n: 'マナ回復', v: w.manaRegen }
-                ];
-                el.innerHTML = stats.map(s => `<div>${s.n}</div><div class="text-right ${isLoot ? 'text-yellow-400' : ''}">${s.v}</div>`).join('');
-            };
-
-            renderStats(player.wand, 'currWandStats');
-            renderStats(loot, 'newLootStats', true);
-
-            currentState = 'PAUSED';
-            document.getElementById('lootUI').classList.remove('hidden');
-
-            document.getElementById('swapBtn').onclick = () => {
-                player.wand.spells.forEach(s => { if (s) player.inventory.push(s); });
-                player.wand = { ...player.wand, ...loot, spells: new Array(loot.slots).fill(null), mana: loot.manaMax };
-                closeLoot();
-            };
-        }
-
-        function closeLoot() {
-            document.getElementById('lootUI').classList.add('hidden');
-            currentState = 'PLAYING';
-            player.wand.pointer = 0;
-        }
-
-        /**
-         * UI SYNC
-         */
-        function updateUI() {
-            document.getElementById('hpBar').style.width = (player.hp / player.maxHp) * 100 + '%';
-            document.getElementById('hpText').innerText = `${Math.ceil(player.hp)}/${player.maxHp}`;
-            document.getElementById('xpBar').style.width = (player.xp / player.xpNext) * 100 + '%';
-            document.getElementById('lvText').innerText = `LV. ${player.level}`;
-            document.getElementById('stageText').innerText = player.level === 7 ? 'FINAL STAGE' : `STAGE ${player.level}`;
-            document.getElementById('stageText').style.color = STAGE_COLORS[player.level - 1];
-            document.getElementById('stageProgress').innerText = player.level === 7 ? 'BOSS BGM ACTIVE' : 'STAGE BGM ACTIVE';
-
-            let w = player.wand;
-            document.getElementById('manaBar').style.width = (w.mana / w.manaMax) * 100 + '%';
-            document.getElementById('manaVal').innerText = `${Math.floor(w.mana)}/${w.manaMax}`;
-
-            if (w.currentRecharge > 0) {
-                document.getElementById('rechargeBar').style.width = (1 - w.currentRecharge / w.rechargeTime) * 100 + '%';
-                document.getElementById('castVal').innerText = 'RELOADING';
-            } else if (w.currentDelay > 0) {
-                document.getElementById('rechargeBar').style.width = '100%';
-                document.getElementById('castVal').innerText = 'DELAY';
-            } else {
-                document.getElementById('rechargeBar').style.width = '100%';
-                document.getElementById('castVal').innerText = 'READY';
-            }
-
-            if (isEditMode) {
-                const drawSlots = (arr, elId, type) => {
-                    let el = document.getElementById(elId); el.innerHTML = '';
-                    arr.forEach((s, i) => {
-                        let d = document.createElement('div');
-                        d.className = `slot ${selection.type === type && selection.idx === i ? 'selected' : ''}`;
-                        d._spellData = s;
-                        d.innerHTML = s ? `<span class="spell-icon">${s.icon}</span>` : '';
-                        d.onclick = () => {
-                            if (selection.type === null) { if (s) selection = { type, idx: i }; }
-                            else {
-                                let from = selection.type === 'wand' ? player.wand.spells : player.inventory;
-                                let to = type === 'wand' ? player.wand.spells : player.inventory;
-                                let tmp = from[selection.idx]; from[selection.idx] = to[i]; to[i] = tmp;
-                                player.inventory = player.inventory.filter((s, idx) => s !== null || idx < 12);
-                                selection = { type: null, idx: null }; player.wand.pointer = 0;
-                            }
-                            updateTooltip();
-                        };
-                        el.appendChild(d);
-                    });
-                };
-                drawSlots(w.spells, 'spellSlots', 'wand');
-                drawSlots(player.inventory, 'inventoryGrid', 'inv');
-            }
-        }
-
-        /**
-         * RENDER
-         */
-        function draw() {
-            ctx.clearRect(0, 0, width, height);
-            if (currentState === 'START') return;
-
-            ctx.save();
-            ctx.translate(width / 2 - player.x, height / 2 - player.y);
-
-            ctx.strokeStyle = '#10141b'; ctx.lineWidth = 2;
-            let gridS = 120;
-            for (let x = Math.floor((player.x - width) / gridS) * gridS; x < player.x + width; x += gridS) { ctx.beginPath(); ctx.moveTo(x, player.y - height); ctx.lineTo(x, player.y + height); ctx.stroke(); }
-            for (let y = Math.floor((player.y - height) / gridS) * gridS; y < player.y + height; y += gridS) { ctx.beginPath(); ctx.moveTo(player.x - width, y); ctx.lineTo(player.x + width, y); ctx.stroke(); }
-
-            chests.forEach(c => { ctx.fillStyle = '#f59e0b'; ctx.fillRect(c.x - 15, c.y - 10, 30, 20); ctx.strokeStyle = '#fff'; ctx.strokeRect(c.x - 15, c.y - 10, 30, 20); });
-            gems.forEach(g => { ctx.fillStyle = '#22d3ee'; ctx.beginPath(); ctx.arc(g.x, g.y, 4, 0, Math.PI * 2); ctx.fill(); });
-
-            ctx.shadowBlur = 10; ctx.shadowColor = '#f00';
-            enemyProjectiles.forEach(p => { ctx.fillStyle = '#ff4444'; ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI * 2); ctx.fill(); });
-            ctx.shadowBlur = 0;
-
-            enemies.forEach(e => {
-                ctx.fillStyle = e.color;
-                if (e.isBoss) {
-                    ctx.shadowBlur = 30; ctx.shadowColor = e.color;
-                    ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2); ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(e.x, e.y - 10, 15, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(e.x, e.y - 10, 7, 0, Math.PI * 2); ctx.fill();
+                if(p.explode) {
+                    explode(p.x, p.y, p.rad, p.dmg);
+                    p.life = 0;
                 } else {
-                    ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2); ctx.fill();
-                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+                    e.hp -= p.dmg;
+                    spawnDamageNumber(e.x, e.y - e.r, p.dmg, p.isCrit ? '#fbbf24' : 'white', p.isCrit);
+                    
+                    p.hitsLeft--;
+                    p.lastHitId = e;
+                    p.hitCooldown = 10; // 次のヒットまでの猶予
+                    
+                    if (p.hitsLeft <= 0) {
+                        p.life = 0;
+                    }
                 }
-                ctx.fillStyle = '#000'; ctx.fillRect(e.x - e.r, e.y - e.r - 15, e.r * 2, 6);
-                ctx.fillStyle = '#ef4444'; ctx.fillRect(e.x - e.r, e.y - e.r - 15, (e.hp / e.maxHp) * e.r * 2, 6);
-            });
-
-            projectiles.forEach(p => {
-                ctx.fillStyle = p.color; ctx.shadowBlur = 15; ctx.shadowColor = p.color;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
-                ctx.shadowBlur = 0;
-            });
-
-            particles.forEach(p => { ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
-            ctx.globalAlpha = 1;
-
-            // Player (Kitsune Mage)
-            ctx.save();
-            ctx.translate(player.x, player.y);
-            if (player.facingLeft) ctx.scale(-1, 1);
-
-            if (playerImgLoaded) {
-                ctx.drawImage(playerImg, -30, -35, 60, 70);
-            } else {
-                // Fallback if image fails
-                ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, 18, 0, Math.PI * 2); ctx.fill();
-                ctx.strokeStyle = '#0ea5e9'; ctx.lineWidth = 3; ctx.stroke();
+                
+                if(e.hp <= 0) {
+                    if(e.isBoss) winGame();
+                    else {
+                        gems.push({x:e.x, y:e.y, xp: 50 + player.level * 20}); 
+                        enemies.splice(ei, 1);
+                    }
+                }
             }
-            ctx.restore();
+        });
+    });
+    projectiles = projectiles.filter(p => p.life > 0);
 
-            // Wand
-            let a = Math.atan2(mouse.y - height / 2, mouse.x - width / 2);
-            ctx.strokeStyle = '#d97706'; ctx.lineWidth = 5; ctx.lineCap = 'round';
-            ctx.beginPath(); ctx.moveTo(player.x, player.y);
-            ctx.lineTo(player.x + Math.cos(a) * 45, player.y + Math.sin(a) * 45); ctx.stroke();
-            // Tip glow
-            ctx.fillStyle = '#fde68a'; ctx.shadowBlur = 10; ctx.shadowColor = '#fbbf24';
-            ctx.beginPath(); ctx.arc(player.x + Math.cos(a) * 45, player.y + Math.sin(a) * 45, 4, 0, Math.PI * 2); ctx.fill();
+    gems.forEach((g, gi) => {
+        if(Math.hypot(player.x-g.x, player.y-g.y) < 180) {
+            let a = Math.atan2(player.y-g.y, player.x-g.x);
+            g.x += Math.cos(a)*14; g.y += Math.sin(a)*14;
+            if(Math.hypot(player.x-g.x, player.y-g.y) < 30) {
+                player.xp += g.xp; gems.splice(gi,1);
+                if(player.xp >= player.xpNext) levelUp();
+            }
+        }
+    });
+
+    particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.alpha -= 0.04; });
+    particles = particles.filter(p => p.alpha > 0);
+
+    damageNumbers.forEach(n => n.update(dt));
+    damageNumbers = damageNumbers.filter(n => n.life > 0);
+
+    gameTime++;
+    updateUI();
+}
+
+function explode(x, y, rad, dmg) {
+    createParticles(x, y, '#ffaa00', 15);
+    enemies.forEach(e => {
+        let d = Math.hypot(x-e.x, y-e.y);
+        if(d < rad) {
+            let actualDmg = dmg * (1 - d/rad);
+            e.hp -= actualDmg;
+            spawnDamageNumber(e.x, e.y - e.r, actualDmg, '#ff9100', false);
+        }
+    });
+}
+
+function spawnEnemy() {
+    if (enemies.length > 20) return; 
+    let a = Math.random()*Math.PI*2, d = 800;
+    let hp = 60 + (player.level * 45);
+    enemies.push({ 
+        x:player.x+Math.cos(a)*d, y:player.y+Math.sin(a)*d, 
+        hp: hp, maxHp: hp, 
+        r:24, color: STAGE_COLORS[player.level - 1], isBoss: false 
+    });
+}
+
+function spawnBoss() {
+    enemies = [];
+    boss = {
+        x: player.x, y: player.y - 500,
+        hp: 8000, maxHp: 8000, r: 100,
+        color: STAGE_COLORS[6], isBoss: true,
+        shootTimer: 0
+    };
+    enemies.push(boss);
+    switchBGM(true);
+}
+
+function updateBoss() {
+    boss.shootTimer++;
+    if(boss.shootTimer % 45 === 0) {
+        for(let i=0; i<18; i++) {
+            let a = (i / 18) * Math.PI * 2 + (gameTime * 0.1);
+            enemyProjectiles.push({
+                x: boss.x, y: boss.y,
+                vx: Math.cos(a) * 7, vy: Math.sin(a) * 7,
+                life: 300
+            });
+        }
+    }
+}
+
+function levelUp() {
+    if(player.level >= 7) return;
+    player.level++; player.xp = 0; 
+    player.xpNext *= 1.4;
+    currentState = 'PAUSED';
+    
+    const modal = document.getElementById('levelUpModal');
+    modal.classList.remove('hidden');
+    document.getElementById('lvUpTitle').innerText = `STAGE ${player.level} REACHED`;
+    
+    let opts = document.getElementById('spellOptions');
+    opts.innerHTML = '';
+    
+    const chosen = [];
+    for(let i=0; i<3; i++) chosen.push(getWeightedRandomSpell());
+
+    chosen.forEach(s => {
+        let b = document.createElement('button');
+        b.className = "flex items-center gap-4 bg-slate-800 p-4 hover:bg-slate-700 text-left border border-white/10 transition-transform hover:scale-105";
+        const rarityText = s.weight < 5 ? '<span class="text-[8px] text-yellow-500 font-bold border border-yellow-500 px-1 ml-2">RARE</span>' : '';
+        b.innerHTML = `<span class="text-2xl">${s.icon}</span><div><div class="font-bold text-sm text-cyan-400">${s.name}${rarityText}</div><div class="text-[9px] text-gray-500 uppercase">${s.type}</div></div>`;
+        b.onclick = () => { 
+            player.inventory.push({...s}); 
+            modal.classList.add('hidden'); 
+            currentState = 'PLAYING';
+        };
+        opts.appendChild(b);
+    });
+}
+
+function winGame() {
+    currentState = 'CLEAR';
+    bgmBoss.pause();
+    document.getElementById('gameClearScreen').classList.remove('hidden');
+    createParticles(player.x, player.y, '#fff', 150);
+}
+
+/**
+ * CHESTS
+ */
+function spawnChest() {
+    let a = Math.random()*Math.PI*2, d = 600;
+    chests.push({ x:player.x+Math.cos(a)*d, y:player.y+Math.sin(a)*d });
+}
+
+function openChest(c) {
+    const loot = {
+        slots: 5 + Math.floor(Math.random()*4),
+        rechargeTime: (0.2 + Math.random()*0.6).toFixed(2) * 1,
+        castDelay: (0.04 + Math.random()*0.1).toFixed(2) * 1,
+        manaMax: 200 + Math.floor(Math.random()*300),
+        manaRegen: 50 + Math.floor(Math.random()*100),
+        spread: Math.floor(Math.random()*6) - 1
+    };
+
+    const renderStats = (w, elId, isLoot = false) => {
+        const el = document.getElementById(elId);
+        const stats = [
+            { n: 'スロット', v: w.slots },
+            { n: '発射間隔', v: w.castDelay + 's' },
+            { n: 'リロード', v: w.rechargeTime + 's' },
+            { n: '最大マナ', v: w.manaMax },
+            { n: 'マナ回復', v: w.manaRegen }
+        ];
+        el.innerHTML = stats.map(s => `<div>${s.n}</div><div class="text-right ${isLoot ? 'text-yellow-400' : ''}">${s.v}</div>`).join('');
+    };
+
+    renderStats(player.wand, 'currWandStats');
+    renderStats(loot, 'newLootStats', true);
+
+    currentState = 'PAUSED'; 
+    document.getElementById('lootUI').classList.remove('hidden');
+    
+    document.getElementById('swapBtn').onclick = () => {
+        player.wand.spells.forEach(s => { if (s) player.inventory.push(s); });
+        player.wand = { ...player.wand, ...loot, spells: new Array(loot.slots).fill(null), mana: loot.manaMax };
+        closeLoot();
+    };
+}
+
+function closeLoot() {
+    document.getElementById('lootUI').classList.add('hidden');
+    currentState = 'PLAYING';
+    player.wand.pointer = 0;
+}
+
+/**
+ * UI SYNC
+ */
+function updateUI() {
+    document.getElementById('hpBar').style.width = (player.hp/player.maxHp)*100 + '%';
+    document.getElementById('hpText').innerText = `${Math.ceil(player.hp)}/${player.maxHp}`;
+    document.getElementById('xpBar').style.width = (player.xp/player.xpNext)*100 + '%';
+    document.getElementById('lvText').innerText = `LV. ${player.level}`;
+    document.getElementById('stageText').innerText = player.level === 7 ? 'FINAL STAGE' : `STAGE ${player.level}`;
+    document.getElementById('stageText').style.color = STAGE_COLORS[player.level - 1];
+    document.getElementById('stageProgress').innerText = player.level === 7 ? 'BOSS BGM ACTIVE' : 'STAGE BGM ACTIVE';
+
+    let w = player.wand;
+    document.getElementById('manaBar').style.width = (w.mana/w.manaMax)*100 + '%';
+    document.getElementById('manaVal').innerText = `${Math.floor(w.mana)}/${w.manaMax}`;
+    
+    if (w.currentRecharge > 0) {
+        document.getElementById('rechargeBar').style.width = (1 - w.currentRecharge / w.rechargeTime) * 100 + '%';
+        document.getElementById('castVal').innerText = 'RELOADING';
+    } else if (w.currentDelay > 0) {
+        document.getElementById('rechargeBar').style.width = '100%';
+        document.getElementById('castVal').innerText = 'DELAY';
+    } else {
+        document.getElementById('rechargeBar').style.width = '100%';
+        document.getElementById('castVal').innerText = 'READY';
+    }
+
+    if(isEditMode) {
+        const drawSlots = (arr, elId, type) => {
+            let el = document.getElementById(elId); el.innerHTML = '';
+            arr.forEach((s, i) => {
+                let d = document.createElement('div');
+                d.className = `slot ${selection.type===type && selection.idx===i ? 'selected' : ''}`;
+                d._spellData = s;
+                d.innerHTML = s ? `<span class="spell-icon">${s.icon}</span>` : '';
+                d.onclick = () => {
+                    if(selection.type === null) { if (s) selection = { type, idx: i }; } 
+                    else {
+                        let from = selection.type==='wand' ? player.wand.spells : player.inventory;
+                        let to = type==='wand' ? player.wand.spells : player.inventory;
+                        let tmp = from[selection.idx]; from[selection.idx] = to[i]; to[i] = tmp;
+                        player.inventory = player.inventory.filter((s, idx) => s !== null || idx < 16);
+                        selection = { type:null, idx:null }; player.wand.pointer = 0;
+                    }
+                    updateTooltip();
+                };
+                el.appendChild(d);
+            });
+        };
+        drawSlots(w.spells, 'spellSlots', 'wand');
+        drawSlots(player.inventory, 'inventoryGrid', 'inv');
+    }
+}
+
+/**
+ * RENDER
+ */
+function draw() {
+    ctx.clearRect(0,0,width,height);
+    if(currentState === 'START') return;
+
+    let offX = width/2 - player.x;
+    let offY = height/2 - player.y;
+
+    ctx.save();
+    ctx.translate(offX, offY);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)'; ctx.lineWidth = 1;
+    let gridS = 100;
+    for(let x = Math.floor((player.x-width)/gridS)*gridS; x < player.x+width; x+=gridS) { ctx.beginPath(); ctx.moveTo(x, player.y-height); ctx.lineTo(x, player.y+height); ctx.stroke(); }
+    for(let y = Math.floor((player.y-height)/gridS)*gridS; y < player.y+height; y+=gridS) { ctx.beginPath(); ctx.moveTo(player.x-width, y); ctx.lineTo(player.x+width, y); ctx.stroke(); }
+
+    chests.forEach(c => { 
+        ctx.fillStyle = '#d97706'; ctx.fillRect(c.x-20, c.y-15, 40, 30); 
+        ctx.strokeStyle='#fde68a'; ctx.lineWidth=2; ctx.strokeRect(c.x-20, c.y-15, 40, 30);
+    });
+    
+    gems.forEach(g => { 
+        ctx.fillStyle = '#06b6d4'; 
+        ctx.beginPath(); ctx.moveTo(g.x, g.y-7); ctx.lineTo(g.x+5, g.y); ctx.lineTo(g.x, g.y+7); ctx.lineTo(g.x-5, g.y); ctx.closePath(); ctx.fill(); 
+    });
+    
+    enemyProjectiles.forEach(p => { 
+        ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
+    });
+
+    enemies.forEach(e => {
+        ctx.fillStyle = e.color;
+        if(e.isBoss) {
+            ctx.shadowBlur = 40; ctx.shadowColor = e.color;
+            ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, Math.PI*2); ctx.fill();
             ctx.shadowBlur = 0;
+        } else {
+            ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+        }
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(e.x - e.r, e.y - e.r - 20, e.r*2, 8);
+        ctx.fillStyle = '#ef4444'; ctx.fillRect(e.x - e.r, e.y - e.r - 20, (e.hp/e.maxHp)*e.r*2, 8);
+    });
 
+    projectiles.forEach(p => {
+        ctx.fillStyle = p.color; ctx.shadowBlur = 20; ctx.shadowColor = p.color;
+        if (p.boomerang) {
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(gameTime * 0.4);
+            ctx.fillRect(-p.radius, -p.radius, p.radius*2, p.radius*2);
             ctx.restore();
+        } else {
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ctx.fill();
         }
+        ctx.shadowBlur = 0;
+    });
 
-        function createParticles(x, y, color, count) {
-            for (let i = 0; i < count; i++) particles.push({ x, y, vx: (Math.random() - 0.5) * 12, vy: (Math.random() - 0.5) * 12, alpha: 1, color });
-        }
+    particles.forEach(p => { ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 5, 5); });
+    ctx.globalAlpha = 1;
 
-        function loop(t) {
-            let dt = Math.min(0.1, (t - lastTime) / 1000);
-            lastTime = t; update(dt); draw(); requestAnimationFrame(loop);
-        }
-        requestAnimationFrame(loop);
+    // Player
+    ctx.save();
+    ctx.translate(player.x, player.y);
+    if(player.facingLeft) ctx.scale(-1, 1);
+    if(playerImgLoaded) {
+        const scale = 1.2;
+        ctx.drawImage(playerImg, -45 * scale, -55 * scale, 90 * scale, 110 * scale);
+    } else {
+        ctx.fillStyle = '#f97316'; ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+    
+    let a = Math.atan2(mouse.y-height/2, mouse.x-width/2);
+    ctx.strokeStyle = '#451a03'; ctx.lineWidth = 6; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(player.x, player.y + 10);
+    ctx.lineTo(player.x + Math.cos(a)*60, player.y + 10 + Math.sin(a)*60); ctx.stroke();
+    ctx.fillStyle = '#fde68a'; ctx.shadowBlur = 20; ctx.shadowColor = '#fbbf24';
+    ctx.beginPath(); ctx.arc(player.x + Math.cos(a)*60, player.y + 10 + Math.sin(a)*60, 6, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur = 0;
 
-    </script>
+    ctx.restore();
+
+    damageNumbers.forEach(n => n.draw(ctx, offX, offY));
+}
+
+function createParticles(x, y, color, count) {
+    for(let i=0; i<count; i++) particles.push({ x, y, vx:(Math.random()-0.5)*15, vy:(Math.random()-0.5)*15, alpha:1, color });
+}
+
+function loop(t) {
+    let dt = Math.min(0.1, (t - lastTime)/1000);
+    lastTime = t; update(dt); draw(); requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+</script>
 </body>
-
 </html>
